@@ -9,6 +9,7 @@ export function TodosPage() {
     appLoader: () => console.log('Todo app loader'),
   });
 
+  console.log(MICROFRONTEND_IDS.TODOS, 'MICROFRONTEND_IDS.TODOS');
   return (
     <MicrofrontendWrapper>
       <div id={MICROFRONTEND_IDS.TODOS}></div>

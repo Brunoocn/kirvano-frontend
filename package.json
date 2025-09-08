@@ -1,0 +1,15 @@
+{
+  "name": "kirvano-frontend",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:host\" \"npm run dev:todos\" \"npm run dev:users\"",
+    "dev:host": "cd host && npm run dev",
+    "dev:todos": "cd todos-mfe && npm run dev",
+    "dev:users": "cd users-mfe && npm run dev",
+    "install:all": "npm install && cd host && npm install && cd ../todos-mfe && npm install && cd ../users-mfe && npm install",
+    "build:all": "cd host && npm run build && cd ../todos-mfe && npm run build && cd ../users-mfe && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

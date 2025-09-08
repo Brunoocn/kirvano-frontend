@@ -15,6 +15,7 @@ export function Header() {
 
   const getPageTitle = () => {
     if (location.pathname.startsWith('/todos')) return 'Todos'
+    if (location.pathname.startsWith('/users')) return 'Users'
     return 'Sistema'
   }
 
@@ -37,6 +38,15 @@ export function Header() {
                 size="sm"
               >
                 Todos
+              </Button>
+            </nav>
+            <nav className="flex space-x-4">
+              <Button
+                variant={location.pathname.startsWith('/users') ? 'default' : 'ghost'}
+                onClick={() => navigate('/users')}
+                size="sm"
+              >
+                Users
               </Button>
             </nav>
           </div>

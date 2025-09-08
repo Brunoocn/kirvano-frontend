@@ -3,15 +3,16 @@ import { MicrofrontendWrapper } from "../../components/microfrontendWrapper";
 import { useMicrofrontend } from "../../hooks/useMicrofrontend";
 import { MICROFRONTEND_IDS } from "../../constants/microfrontend";
 
-export function UsuariosPage() {
+export function UsersPage() {
   useMicrofrontend({
     appId: MICROFRONTEND_IDS.USERS,
     appLoader: () => console.log('Users app loader'),
   });
 
   return (
-    <MicrofrontendWrapper>
-      <div id={MICROFRONTEND_IDS.USERS}></div>
-    </MicrofrontendWrapper>
+    <></>
+    // <MicrofrontendWrapper>
+    //   <div id={MICROFRONTEND_IDS.USERS}></div>
+    // </MicrofrontendWrapper>
   );
 }
