@@ -14,4 +14,3 @@ declare module "auth/*" {
   const component: ComponentType;
   export default component;
 }
-

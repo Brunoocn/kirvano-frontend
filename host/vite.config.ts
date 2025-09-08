@@ -13,9 +13,9 @@ export default defineConfig(({ mode }) => {
       "import.meta.env.VITE_TODOS_MFE_URL": JSON.stringify(
         env.VITE_ITEMS_MFE_URL
       ),
-      // "import.meta.env.VITE_USERS_MFE_URL": JSON.stringify(
-      //   env.VITE_USERS_MFE_URL
-      // ),
+      "import.meta.env.VITE_USERS_MFE_URL": JSON.stringify(
+        env.VITE_USERS_MFE_URL
+      ),
     },
     plugins: [
       react(),
@@ -29,9 +29,9 @@ export default defineConfig(({ mode }) => {
           remoteTodos:
             env.VITE_ITEMS_MFE_URL ||
             "http://localhost:3001/assets/remoteEntry.js",
-          // remoteUsers:
-          //   env.VITE_USERS_MFE_URL ||
-          //   "http://localhost:3002/assets/remoteEntry.js",
+          remoteUsers:
+            env.VITE_USERS_MFE_URL ||
+            "http://localhost:3002/assets/remoteEntry.js",
         },
       }),
     ],

@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { TodosPage } from "../pages/todo";
-// import { UsersPage } from "../pages/users";
+import { UsersPage } from "../pages/users";
 
 import { useAuth } from "../contexts/AuthContext";
 import { LoginPage } from "../pages/auth/loginPage";
@@ -37,14 +37,15 @@ export function AppRoutes() {
         }
       />
 
-      {/* <Route
+      <Route
         path="/users"
         element={
           <ProtectedRoute>
             <UsersPage />
           </ProtectedRoute>
         }
-      /> */}
+      />
+
 
       <Route 
         path="/" 

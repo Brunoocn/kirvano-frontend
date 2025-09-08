@@ -4,7 +4,7 @@ import { MICROFRONTEND_EVENTS } from '../constants/microfrontend'
 
 interface MicrofrontendConfig {
   appId: string
-  appLoader: (id: string) => void
+  appLoader: (id: string) => void | Promise<void>
   onLogoutError?: () => void
   onTokenRenew?: (event: CustomEvent) => void
 }
@@ -39,9 +39,9 @@ export function useMicrofrontend({
       window.removeEventListener(MICROFRONTEND_EVENTS.RENEW_TOKEN, handleTokenRenew as EventListener)
     }
 
-    const loadMicrofrontend = () => {
+    const loadMicrofrontend = async () => {
       try {
-        appLoader(appId)
+        await appLoader(appId)
       } catch (error) {
         console.error(`Error loading ${appId}:`, error)
       }

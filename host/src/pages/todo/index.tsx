@@ -1,4 +1,3 @@
-// import { app } from "remoteTodos/todos-app";
 import { MicrofrontendWrapper } from "../../components/microfrontendWrapper";
 import { useMicrofrontend } from "../../hooks/useMicrofrontend";
 import { MICROFRONTEND_IDS } from "../../constants/microfrontend";
@@ -6,10 +5,20 @@ import { MICROFRONTEND_IDS } from "../../constants/microfrontend";
 export function TodosPage() {
   useMicrofrontend({
     appId: MICROFRONTEND_IDS.TODOS,
-    appLoader: () => console.log('Todo app loader'),
+    appLoader: async (id: string) => {
+      try {
+        const module = await import("remoteTodos/todos-app" );
+        const app = module.app ;
+
+        if (typeof app === "function") {
+          app(id);
+        }
+      } catch (error) {
+        // Silently fail - fallback handled by MicrofrontendWrapper
+      }
+    },
   });
 
-  console.log(MICROFRONTEND_IDS.TODOS, 'MICROFRONTEND_IDS.TODOS');
   return (
     <MicrofrontendWrapper>
       <div id={MICROFRONTEND_IDS.TODOS}></div>
