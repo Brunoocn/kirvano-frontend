@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { UsersService } from '../services/usersService';
 import { toast } from '../hooks/use-toast';
-import type { CreateUser, UpdateUser } from '../types';
+import type { CreateUser, UpdateUser } from '../types/user';
 
 export const QUERY_KEYS = {
   USERS: ['users'] as const,

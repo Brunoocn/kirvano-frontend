@@ -8,9 +8,10 @@ import { usePagination } from "../../hooks/usePagination";
 import { getCurrentUser } from "../../utils/getCurrentUser";
 
 import type { User, CreateUser, UpdateUser } from "../../types/user";
-import { CreateUsersModal } from "../../components/CreateUsersModal";
-import { UpdateUserModal } from "../../components/UpdateUserModal";
-import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { CreateUsersModal } from "../../components/createUsersModal";
+import { UpdateUserModal } from "../../components/updateUserModal";
+import { ConfirmationModal } from "../../components/confirmationModal";
+
 
 
 export function UsersPage() {

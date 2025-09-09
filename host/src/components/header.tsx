@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { LogOut, User } from "lucide-react";
+import { ProfileModal } from "./profileModal";
 
 export function Header() {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -47,10 +50,13 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setProfileModalOpen(true)}
+              className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-all duration-200 cursor-pointer border border-transparent hover:border-gray-200"
+            >
               <User className="h-4 w-4" />
-              <span className="text-sm text-gray-700">{user?.name}</span>
-            </div>
+              <span className="font-medium">{user?.name}</span>
+            </button>
             <Button
               variant="ghost"
               size="sm"
@@ -62,6 +68,11 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      <ProfileModal
+        open={profileModalOpen}
+        onOpenChange={setProfileModalOpen}
+      />
     </header>
   );
 }
