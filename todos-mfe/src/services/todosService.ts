@@ -10,7 +10,7 @@ export class TodosService {
 
     static async getTodos(): Promise<Todo[]> {
         try {
-            const response = await api.get<Todo[]>(this.ENDPOINTS.TODOS);
+            const response = await api.get<Todo[]>(TodosService.ENDPOINTS.TODOS);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -23,7 +23,7 @@ export class TodosService {
 
     static async getTodoById(id: number): Promise<Todo> {
         try {
-            const response = await api.get<Todo>(`${this.ENDPOINTS.TODOS}/${id}`);
+            const response = await api.get<Todo>(`${TodosService.ENDPOINTS.TODOS}/${id}`);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

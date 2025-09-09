@@ -1,19 +1,25 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useUsers, useCreateUsers, useUpdateUser, useDeleteUser } from "../../hooks/useUsers";
 import { Button } from "../../components/ui/button";
 import { RefreshCw, Plus } from "lucide-react";
-import "../../styles/globals.css";
-import { UsersTable } from "../../components/UsersTable";
-import { UsersPagination } from "../../components/UsersPagination";
+import { UsersTable } from "../../components/usersTable";
+import { UsersPagination } from "../../components/usersPagination";
 import { usePagination } from "../../hooks/usePagination";
+import { getCurrentUser } from "../../utils/getCurrentUser";
+
+import type { User, CreateUser, UpdateUser } from "../../types/user";
 import { CreateUsersModal } from "../../components/CreateUsersModal";
 import { UpdateUserModal } from "../../components/UpdateUserModal";
-import type { User, CreateUser, UpdateUser } from "../../types";
+import { ConfirmationModal } from "../../components/ConfirmationModal";
+
 
 export function UsersPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [resetCreateForm, setResetCreateForm] = useState(false);
 
   const { 
     data: allUsers = [], 
@@ -26,20 +32,36 @@ export function UsersPage() {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
+  const filteredUsers = useMemo(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      return allUsers.filter(user => user.id !== currentUser.id);
+    }
+    return allUsers;
+  }, [allUsers]);
+
   const {
     currentItems: currentUsers,
     totalPages,
     currentPage,
     handlePageChange,
-  } = usePagination({ data: allUsers, itemsPerPage: 10 });
+  } = usePagination({ data: filteredUsers, itemsPerPage: 10 });
 
   const handleCreateUsers = async (users: CreateUser[]) => {
     try {
       await createUsersMutation.mutateAsync(users);
+      setResetCreateForm(true);
       setCreateModalOpen(false);
     } catch (error) {
       console.error('Erro ao criar usuários:', error);
     }
+  };
+
+  const handleCreateModalClose = (open: boolean) => {
+    if (!open) {
+      setResetCreateForm(false);
+    }
+    setCreateModalOpen(open);
   };
 
   const handleEditUser = (user: User) => {
@@ -57,10 +79,20 @@ export function UsersPage() {
     }
   };
 
-  const handleDeleteUser = async (id: number) => {
-    if (window.confirm('Tem certeza que deseja deletar este usuário?')) {
+  const handleDeleteUser = (id: number) => {
+    const user = filteredUsers.find(u => u.id === id);
+    if (user) {
+      setUserToDelete(user);
+      setConfirmDeleteOpen(true);
+    }
+  };
+
+  const confirmDeleteUser = async () => {
+    if (userToDelete) {
       try {
-        await deleteUserMutation.mutateAsync(id);
+        await deleteUserMutation.mutateAsync(userToDelete.id);
+        setConfirmDeleteOpen(false);
+        setUserToDelete(null);
       } catch (error) {
         console.error('Erro ao deletar usuário:', error);
       }
@@ -98,7 +130,7 @@ export function UsersPage() {
 
         <UsersTable
           users={currentUsers}
-          allUsers={allUsers}
+          allUsers={filteredUsers}
           loading={loading}
           error={error?.message || null}
           onEdit={handleEditUser}
@@ -115,9 +147,10 @@ export function UsersPage() {
 
         <CreateUsersModal
           open={createModalOpen}
-          onOpenChange={setCreateModalOpen}
+          onOpenChange={handleCreateModalClose}
           onSubmit={handleCreateUsers}
           loading={createUsersMutation.isPending}
+          onSuccess={resetCreateForm ? () => {} : undefined}
         />
 
         <UpdateUserModal
@@ -126,6 +159,22 @@ export function UsersPage() {
           onSubmit={handleUpdateUser}
           user={selectedUser}
           loading={updateUserMutation.isPending}
+        />
+
+        <ConfirmationModal
+          open={confirmDeleteOpen}
+          onOpenChange={setConfirmDeleteOpen}
+          onConfirm={confirmDeleteUser}
+          loading={deleteUserMutation.isPending}
+          title="Deletar usuário"
+          description={
+            userToDelete 
+              ? `Tem certeza que deseja deletar o usuário "${userToDelete.name}"? Esta ação não pode ser desfeita.`
+              : "Tem certeza que deseja deletar este usuário?"
+          }
+          confirmText="Deletar"
+          cancelText="Cancelar"
+          variant="destructive"
         />
       </div>
     </div>

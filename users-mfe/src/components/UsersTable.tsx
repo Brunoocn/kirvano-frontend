@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { Edit, Trash2, User } from "lucide-react";
-import type { User as UserType } from "../types";
+import type { User as UserType } from "../types/user";
 import { LoadingState } from "./loading";
 import { Error } from "./error";
 
@@ -60,7 +60,6 @@ export function UsersTable({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-20">ID</TableHead>
                   <TableHead>Nome</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead className="w-32">Ações</TableHead>
@@ -69,7 +68,6 @@ export function UsersTable({
               <TableBody>
                 {users.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.id}</TableCell>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>

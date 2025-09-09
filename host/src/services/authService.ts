@@ -1,27 +1,10 @@
 import axios from 'axios'
 import { api } from './api'
+import type { AuthResponse, LoginRequest, RegisterRequest } from '../types/auth'
+import type { User } from '../types/user'
 
-interface User {
-  id: string
-  name: string
-  email: string
-}
 
-interface AuthResponse {
-  user: User
-  token: string
-}
 
-interface LoginRequest {
-  email: string
-  password: string
-}
-
-interface RegisterRequest {
-  name: string
-  email: string
-  password: string
-}
 
 export class AuthService {
   private static readonly ENDPOINTS = {
@@ -66,6 +49,19 @@ export class AuthService {
       return response.status === 200
     } catch (error) {
       return false
+    }
+  }
+
+  static async updateProfile(userId: string, data: Partial<User>): Promise<User> {
+    try {
+      const response = await api.put<User>(`/users/${userId}`, data)
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Erro ao atualizar perfil'
+        throw new Error(message)
+      }
+      throw new Error('Erro ao atualizar perfil')
     }
   }
 }

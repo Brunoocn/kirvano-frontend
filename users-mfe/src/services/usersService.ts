@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { api } from './api';
-import type { User, CreateUser, UpdateUser } from '../types';
+import type { CreateUser, UpdateUser, User } from '../types/user';
+
 
 export class UsersService {
   private static readonly ENDPOINTS = {
@@ -9,9 +10,10 @@ export class UsersService {
 
   static async getUsers(): Promise<User[]> {
     try {
-      const response = await api.get<User[]>(this.ENDPOINTS.USERS);
+      const response = await api.get<User[]>(UsersService.ENDPOINTS.USERS);
       return response.data;
     } catch (error) {
+      console.log('Error in getUsers:', error);
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message || 'Erro ao carregar usuários';
         throw new Error(message);
@@ -22,7 +24,7 @@ export class UsersService {
 
   static async getUserById(id: number): Promise<User> {
     try {
-      const response = await api.get<User>(`${this.ENDPOINTS.USERS}/${id}`);
+      const response = await api.get<User>(`${UsersService.ENDPOINTS.USERS}/${id}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -35,7 +37,7 @@ export class UsersService {
 
   static async createUsers(users: CreateUser[]): Promise<User[]> {
     try {
-      const response = await api.post<User[]>(this.ENDPOINTS.USERS, users);
+      const response = await api.post<User[]>(UsersService.ENDPOINTS.USERS, users);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -48,7 +50,7 @@ export class UsersService {
 
   static async updateUser(id: number, user: UpdateUser): Promise<User> {
     try {
-      const response = await api.put<User>(`${this.ENDPOINTS.USERS}/${id}`, user);
+      const response = await api.put<User>(`${UsersService.ENDPOINTS.USERS}/${id}`, user);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -61,7 +63,7 @@ export class UsersService {
 
   static async deleteUser(id: number): Promise<void> {
     try {
-      await api.delete(`${this.ENDPOINTS.USERS}/${id}`);
+      await api.delete(`${UsersService.ENDPOINTS.USERS}/${id}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message || 'Erro ao deletar usuário';

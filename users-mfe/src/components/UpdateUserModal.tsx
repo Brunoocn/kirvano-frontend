@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +13,8 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import type { User, UpdateUser } from "../types";
+import type { User, UpdateUser } from "../types/user";
+import { updateUserFormSchema, type UpdateUserFormOnlyData } from "../schemas/userSchema";
 
 interface UpdateUserModalProps {
   open: boolean;
@@ -28,34 +31,41 @@ export function UpdateUserModal({
   user,
   loading = false,
 }: UpdateUserModalProps) {
-  const [formData, setFormData] = useState<UpdateUser>({
-    name: "",
-    email: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UpdateUserFormOnlyData>({
+    resolver: zodResolver(updateUserFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
   });
 
   useEffect(() => {
     if (user) {
-      setFormData({
+      reset({
         name: user.name,
         email: user.email,
       });
     }
-  }, [user]);
+  }, [user, open, reset]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (user && formData.name?.trim() && formData.email?.trim()) {
-      onSubmit(user.id, formData);
+  const onFormSubmit = (data: UpdateUserFormOnlyData) => {
+    if (user) {
+      const updateData: UpdateUser = {
+        name: data.name,
+        email: data.email,
+      };
+      onSubmit(user.id, updateData);
     }
   };
 
   const handleClose = () => {
-    setFormData({ name: "", email: "" });
+    reset({ name: "", email: "" });
     onOpenChange(false);
-  };
-
-  const updateField = (field: keyof UpdateUser, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -65,22 +75,25 @@ export function UpdateUserModal({
         <DialogHeader>
           <DialogTitle>Editar Usuário</DialogTitle>
           <DialogDescription>
-            Atualize as informações do usuário. A senha não pode ser alterada.
+            Atualize as informações do usuário.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="space-y-3">
             <div>
               <Label htmlFor="name">Nome</Label>
               <Input
                 id="name"
                 type="text"
-                value={formData.name || ""}
-                onChange={(e) => updateField("name", e.target.value)}
+                {...register("name")}
                 placeholder="Nome completo"
-                required
               />
+              {errors.name && (
+                <span className="text-sm text-red-500">
+                  {errors.name.message}
+                </span>
+              )}
             </div>
 
             <div>
@@ -88,22 +101,14 @@ export function UpdateUserModal({
               <Input
                 id="email"
                 type="email"
-                value={formData.email || ""}
-                onChange={(e) => updateField("email", e.target.value)}
+                {...register("email")}
                 placeholder="email@exemplo.com"
-                required
               />
-            </div>
-
-            <div>
-              <Label htmlFor="user-id">ID do Usuário</Label>
-              <Input
-                id="user-id"
-                type="text"
-                value={user?.id || ""}
-                disabled
-                className="bg-muted"
-              />
+              {errors.email && (
+                <span className="text-sm text-red-500">
+                  {errors.email.message}
+                </span>
+              )}
             </div>
           </div>
 

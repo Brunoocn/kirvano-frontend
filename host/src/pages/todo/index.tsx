@@ -16,7 +16,6 @@ export function TodosPage() {
         }
       } catch (error) {
         console.log(error, "error loading todos microfrontend");
-        // Silently fail - fallback handled by MicrofrontendWrapper
       }
     },
   });

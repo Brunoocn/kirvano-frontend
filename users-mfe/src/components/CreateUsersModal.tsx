@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -12,13 +14,15 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import type { CreateUser } from "../types";
+import type { CreateUser } from "../types/user";
+import { formSchema, type FormData } from "../schemas/createUserSchema";
 
 interface CreateUsersModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (users: CreateUser[]) => void;
   loading?: boolean;
+  onSuccess?: () => void;
 }
 
 export function CreateUsersModal({
@@ -26,47 +30,49 @@ export function CreateUsersModal({
   onOpenChange,
   onSubmit,
   loading = false,
+  onSuccess,
 }: CreateUsersModalProps) {
-  const [users, setUsers] = useState<CreateUser[]>([
-    { name: "", email: "", password: "" },
-  ]);
+  const { control, handleSubmit, reset, register, watch, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      users: [{ name: "", email: "", password: "" }],
+    },
+  });
+
+  const watchedUsers = watch("users");
+
+  useEffect(() => {
+    if (onSuccess) {
+      reset();
+    }
+  }, [onSuccess, reset]);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "users",
+  });
 
   const addUser = () => {
-    setUsers([...users, { name: "", email: "", password: "" }]);
+    append({ name: "", email: "", password: "" });
   };
 
   const removeUser = (index: number) => {
-    if (users.length > 1) {
-      setUsers(users.filter((_, i) => i !== index));
+    if (fields.length > 1) {
+      remove(index);
     }
   };
 
-  const updateUser = (index: number, field: keyof CreateUser, value: string) => {
-    const updatedUsers = users.map((user, i) =>
-      i === index ? { ...user, [field]: value } : user
-    );
-    setUsers(updatedUsers);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const validUsers = users.filter(
-      (user) => user.name.trim() && user.email.trim() && user.password.trim()
-    );
-    if (validUsers.length > 0) {
-      onSubmit(validUsers);
-      setUsers([{ name: "", email: "", password: "" }]);
-    }
+  const onFormSubmit = (data: FormData) => {
+    onSubmit(data.users);
   };
 
   const handleClose = () => {
-    setUsers([{ name: "", email: "", password: "" }]);
     onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
+    <Dialog open={open} onOpenChange={handleClose} maxWidth="max-w-6xl">
+      <DialogContent>
         <DialogClose onClick={handleClose} />
         <DialogHeader>
           <DialogTitle>Criar Usuários</DialogTitle>
@@ -75,13 +81,18 @@ export function CreateUsersModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="max-h-96 overflow-y-auto space-y-4">
-            {users.map((user, index) => (
-              <div key={index} className="border rounded-lg p-4 space-y-3">
+            {fields.map((field, index) => (
+              <div key={field.id} className="border rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium">Usuário {index + 1}</h4>
-                  {users.length > 1 && (
+                  <h4 className="font-medium">
+                    {watchedUsers[index]?.name?.trim() 
+                      ? watchedUsers[index].name 
+                      : `Usuário ${index + 1}`
+                    }
+                  </h4>
+                  {fields.length > 1 && (
                     <Button
                       type="button"
                       variant="outline"
@@ -93,17 +104,20 @@ export function CreateUsersModal({
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor={`name-${index}`}>Nome</Label>
                     <Input
                       id={`name-${index}`}
                       type="text"
-                      value={user.name}
-                      onChange={(e) => updateUser(index, "name", e.target.value)}
+                      {...register(`users.${index}.name`)}
                       placeholder="Nome completo"
-                      required
                     />
+                    {errors.users?.[index]?.name && (
+                      <span className="text-sm text-red-500">
+                        {errors.users[index]?.name?.message}
+                      </span>
+                    )}
                   </div>
 
                   <div>
@@ -111,11 +125,14 @@ export function CreateUsersModal({
                     <Input
                       id={`email-${index}`}
                       type="email"
-                      value={user.email}
-                      onChange={(e) => updateUser(index, "email", e.target.value)}
+                      {...register(`users.${index}.email`)}
                       placeholder="email@exemplo.com"
-                      required
                     />
+                    {errors.users?.[index]?.email && (
+                      <span className="text-sm text-red-500">
+                        {errors.users[index]?.email?.message}
+                      </span>
+                    )}
                   </div>
 
                   <div>
@@ -123,11 +140,14 @@ export function CreateUsersModal({
                     <Input
                       id={`password-${index}`}
                       type="password"
-                      value={user.password}
-                      onChange={(e) => updateUser(index, "password", e.target.value)}
+                      {...register(`users.${index}.password`)}
                       placeholder="••••••••"
-                      required
                     />
+                    {errors.users?.[index]?.password && (
+                      <span className="text-sm text-red-500">
+                        {errors.users[index]?.password?.message}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
