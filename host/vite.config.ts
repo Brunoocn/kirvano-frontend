@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
         env.VITE_API_BASE_URL
       ),
       "import.meta.env.VITE_TODOS_MFE_URL": JSON.stringify(
-        env.VITE_ITEMS_MFE_URL
+        env.VITE_TODOS_MFE_URL
       ),
       "import.meta.env.VITE_USERS_MFE_URL": JSON.stringify(
         env.VITE_USERS_MFE_URL
@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
         },
         remotes: {
           remoteTodos:
-            env.VITE_ITEMS_MFE_URL ||
+            env.VITE_TODOS_MFE_URL ||
             "http://localhost:3001/assets/remoteEntry.js",
           remoteUsers:
             env.VITE_USERS_MFE_URL ||

@@ -7,13 +7,15 @@ export function TodosPage() {
     appId: MICROFRONTEND_IDS.TODOS,
     appLoader: async (id: string) => {
       try {
-        const module = await import("remoteTodos/todos-app" );
-        const app = module.app ;
+
+        const module = await import("remoteTodos/todos-app");
+        const app = module.app;
 
         if (typeof app === "function") {
           app(id);
         }
       } catch (error) {
+        console.log(error, "error loading todos microfrontend");
         // Silently fail - fallback handled by MicrofrontendWrapper
       }
     },
