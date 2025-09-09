@@ -59,8 +59,8 @@ kirvano-frontend/
 ├── host/                    # Aplicação host principal
 │   ├── src/
 │   │   ├── pages/          # Páginas da aplicação
-│   │   ├── routes/         # Configuração de rotas
-│   │   └── config/         # Configurações (API, etc)
+│   │   |── routes/         # Configuração de rotas
+│   │  
 │   └── vite.config.ts      # Configuração Vite + Federation
 ├── todos-mfe/              # Microfrontend de Todos
 │   ├── src/
