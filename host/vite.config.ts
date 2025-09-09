@@ -22,9 +22,6 @@ export default defineConfig(({ mode }) => {
       federation({
         name: "root_app",
         filename: "remoteEntry.js",
-        exposes: {
-          "./api": "./src/config/axios.config.ts",
-        },
         remotes: {
           remoteTodos:
             env.VITE_TODOS_MFE_URL ||
