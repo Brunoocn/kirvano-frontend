@@ -8,13 +8,13 @@ export function UsersPage() {
     appLoader: async (id: string) => {
       try {
         const module = await import("remoteUsers/users-app");
-        const app = module.app || module.default?.app || module.default;
+        const app = module.app;
         
         if (typeof app === 'function') {
           app(id);
         }
       } catch (error) {
-        // Silently fail - fallback handled by MicrofrontendWrapper
+         console.log(error, 'error loading users microfrontend');
       }
     },
   });

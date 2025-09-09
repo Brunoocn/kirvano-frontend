@@ -1,38 +1,22 @@
 import axios from 'axios'
 import { api } from './api'
+import type { AuthResponse, LoginRequest, RegisterRequest } from '../types/auth'
+import type { User } from '../types/user'
 
-interface User {
-  id: string
-  name: string
-  email: string
-}
 
-interface AuthResponse {
-  user: User
-  token: string
-}
 
-interface LoginRequest {
-  email: string
-  password: string
-}
-
-interface RegisterRequest {
-  name: string
-  email: string
-  password: string
-}
 
 export class AuthService {
   private static readonly ENDPOINTS = {
     LOGIN: '/authentication/login',
     REGISTER: '/authentication/register',
     TOKEN_VALID: '/authentication/token-valid',
+    USERS: '/users',
   } as const
 
   static async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>(this.ENDPOINTS.LOGIN, credentials)
+      const response = await api.post<AuthResponse>(AuthService.ENDPOINTS.LOGIN, credentials)
       return response.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -45,7 +29,7 @@ export class AuthService {
 
   static async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>(this.ENDPOINTS.REGISTER, userData)
+      const response = await api.post<AuthResponse>(AuthService.ENDPOINTS.REGISTER, userData)
       return response.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -58,14 +42,41 @@ export class AuthService {
 
   static async validateToken(token: string): Promise<boolean> {
     try {
-      const response = await api.get(this.ENDPOINTS.TOKEN_VALID, {
+      const response = await api.get(AuthService.ENDPOINTS.TOKEN_VALID, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       return response.status === 200
     } catch (error) {
+      console.error('Erro ao validar token:', error)
       return false
+    }
+  }
+
+  static async updateProfile(userId: string, data: Partial<User>): Promise<User> {
+    try {
+      const response = await api.put<User>(`${AuthService.ENDPOINTS.USERS}/${userId}`, data)
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Erro ao atualizar perfil'
+        throw new Error(message)
+      }
+      throw new Error('Erro ao atualizar perfil')
+    }
+  }
+
+  static async getProfileInfo(userId: string): Promise<User> {
+    try {
+      const response = await api.get<User>(`${AuthService.ENDPOINTS.USERS}/${userId}`)
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Erro ao buscar informações do perfil'
+        throw new Error(message)
+      }
+      throw new Error('Erro ao buscar informações do perfil')
     }
   }
 }

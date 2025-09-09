@@ -1,26 +1,23 @@
-import { useAuth } from '../contexts/AuthContext'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Button } from './ui/button'
-import { LogOut, User } from 'lucide-react'
+import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "./ui/button";
+import { LogOut, User } from "lucide-react";
+import { ProfileModal } from "./profileModal";
 
 export function Header() {
-  const { user, logout, isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const handleLogout = () => {
-    logout()
-    navigate('/auth')
-  }
-
-  const getPageTitle = () => {
-    if (location.pathname.startsWith('/todos')) return 'Todos'
-    if (location.pathname.startsWith('/users')) return 'Users'
-    return 'Sistema'
-  }
+    logout();
+    navigate("/auth");
+  };
 
   if (!isAuthenticated) {
-    return null
+    return null;
   }
 
   return (
@@ -28,13 +25,12 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold text-gray-900">
-              {getPageTitle()}
-            </h1>
             <nav className="flex space-x-4">
               <Button
-                variant={location.pathname.startsWith('/todos') ? 'default' : 'ghost'}
-                onClick={() => navigate('/todos')}
+                variant={
+                  location.pathname.startsWith("/todos") ? "default" : "ghost"
+                }
+                onClick={() => navigate("/todos")}
                 size="sm"
               >
                 Todos
@@ -42,8 +38,10 @@ export function Header() {
             </nav>
             <nav className="flex space-x-4">
               <Button
-                variant={location.pathname.startsWith('/users') ? 'default' : 'ghost'}
-                onClick={() => navigate('/users')}
+                variant={
+                  location.pathname.startsWith("/users") ? "default" : "ghost"
+                }
+                onClick={() => navigate("/users")}
                 size="sm"
               >
                 Users
@@ -52,10 +50,13 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setProfileModalOpen(true)}
+              className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-all duration-200 cursor-pointer border border-transparent hover:border-gray-200"
+            >
               <User className="h-4 w-4" />
-              <span className="text-sm text-gray-700">{user?.name}</span>
-            </div>
+              <span className="font-medium">{user?.name}</span>
+            </button>
             <Button
               variant="ghost"
               size="sm"
@@ -67,6 +68,11 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      <ProfileModal
+        open={profileModalOpen}
+        onOpenChange={setProfileModalOpen}
+      />
     </header>
-  )
+  );
 }

@@ -19,13 +19,11 @@ export function useMicrofrontend({
 
   useEffect(() => {
     const handleLogoutError = () => {
-      console.log(`Logout error detected in ${appId}`)
       onLogoutError?.()
       logout()
     }
 
     const handleTokenRenew = (event: CustomEvent) => {
-      console.log(`Token renewal requested in ${appId}`, event)
       onTokenRenew?.(event)
     }
 
