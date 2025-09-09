@@ -7,7 +7,8 @@
     "dev:todos": "cd todos-mfe && npm run dev",
     "dev:users": "cd users-mfe && npm run dev",
     "install:all": "npm install && cd host && npm install && cd ../todos-mfe && npm install && cd ../users-mfe && npm install",
-    "build:all": "cd host && npm run build && cd ../todos-mfe && npm run build && cd ../users-mfe && npm run build"
+    "build:all": "cd host && npm run build && cd ../todos-mfe && npm run build && cd ../users-mfe && npm run build",
+    "preview": "npm run build:all && concurrently \"cd host && npm run preview\" \"cd todos-mfe && npm run preview\" \"cd users-mfe && npm run preview\" && sleep 2 && open http://localhost:3000"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

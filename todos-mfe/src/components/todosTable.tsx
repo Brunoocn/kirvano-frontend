@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { CheckCircle, Clock } from "lucide-react";
-import type { Todo } from "../types";
+import type { Todo } from "../types/todo";
 import { LoadingState } from "./loading";
 import { Error } from "./error";
 

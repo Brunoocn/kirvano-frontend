@@ -49,6 +49,7 @@ export class AuthService {
       })
       return response.status === 200
     } catch (error) {
+      console.error('Erro ao validar token:', error)
       return false
     }
   }

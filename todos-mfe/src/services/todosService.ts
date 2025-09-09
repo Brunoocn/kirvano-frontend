@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import type { Todo } from '../types';
+import type { Todo } from '../types/todo';
 import api from './api';
 
 export class TodosService {
