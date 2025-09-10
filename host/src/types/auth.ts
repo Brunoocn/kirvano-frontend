@@ -1,8 +1,9 @@
-import type { User } from "./user"
+
 
 export interface AuthResponse {
-  user: User
-  token: string
+  name: string
+  email: string
+  id: string
 }
 
 export interface LoginRequest {

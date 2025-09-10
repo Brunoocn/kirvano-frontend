@@ -96,15 +96,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const data = await AuthService.register({ name, email, password });
 
-      setToken(data.token);
-      setUser(data.user);
-
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("authUser", JSON.stringify(data.user));
-
       toast({
         title: "Conta criada com sucesso!",
-        description: `Bem-vindo(a), ${data.user.name}!`,
+        description: `Bem-vindo(a), ${data.name}!`,
       });
     } catch (error) {
       const errorMessage =
